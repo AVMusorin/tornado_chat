@@ -10,6 +10,9 @@
         $chatboxTitleClose.on('click', function(e) {
             e.stopPropagation();
             $chatbox.addClass('chatbox--closed');
+            if (window.sock) {
+                window.sock.close();
+            }
         });
         $chatbox.on('transitionend', function() {
             if ($chatbox.hasClass('chatbox--closed')) $chatbox.remove();
@@ -34,9 +37,11 @@ $(document).ready(function(){
                 }
             }
 
+
     function setup(){
         var host = "ws://127.0.0.1:8080/ws";
-        var socket = new WebSocket(host);   
+        var socket = new WebSocket(host); 
+        window.sock = socket;  
         var $txt = $("#message");
         var $btnSend = $("#sendmessage");
         var inputName = $("#inputName").val();
@@ -69,6 +74,7 @@ $(document).ready(function(){
             }
             socket.onclose = function(){
                 showServerResponse("The connection has been closed.");
+                window.sock = false;
             }
         }else{
             console.log("invalid socket");
@@ -84,7 +90,7 @@ $(document).ready(function(){
             $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--right'> <img src='https://s3.amazonaws.com/uifaces/faces/twitter/arashmil/128.jpg' alt='Picture'> <p>" + txt + "</p> </div>");
         } 
         function managerResponse(txt) {
-            $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--left'> <img src='https://s3.amazonaws.com/uifaces/faces/twitter/arashmil/128.jpg' alt='Picture'> <p>" + txt + "</p> </div>");
+            $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--left'> <img src='../img/person.png' alt='Picture'> <p>" + txt + "</p> </div>");
         }   
     }
     }); 
