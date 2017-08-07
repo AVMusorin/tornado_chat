@@ -47,6 +47,10 @@ def _update_last_message(conn, cur, token, message, **kwargs):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
+        conn.rollback()
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
         print(e, 'Ошибка при попытке обновить последнее сообщение на %s' %message)
         raise e
 
@@ -55,6 +59,10 @@ def add_remote_ip(conn, cur, token, ip):
     query = "UPDATE chat SET remote_ip = %s WHERE token = %s"
     data = [ip, token]
     try:
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
@@ -87,6 +95,10 @@ def delete_remote_ip(conn, cur, token):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
+        conn.rollback()
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
         print(e, 'Ошибка при попытке удалить ip адрес')
         raise e
 
@@ -111,6 +123,10 @@ def _update_customer_asked(conn, cur, token, to_value):
     query = "UPDATE chat SET customer_asked = %s WHERE token = %s"
     data = [to_value, token]
     try:
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
@@ -165,6 +181,10 @@ def _make_bot_busy(conn, cur, token):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
+        conn.rollback()
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
         print(e, 'Ошибка при попытке изменить значение "ready" на False')
         raise e
 
@@ -177,8 +197,10 @@ def _make_bot_free(conn, cur, token):
         conn.commit()
     except Exception as e:
         conn.rollback()
-        print(e, 'Ошибка при попытке изменить значение "ready" на True')
+        cur.execute(query, data)
+        conn.commit()
     except Exception as e:
+        print(e, 'Ошибка при попытке изменить значение "ready" на True')
         raise e
 
 
@@ -189,6 +211,10 @@ def add_user(conn, cur, name, email):
     try:
         cur.execute(query, data)
         conn.commit()
+    except Exception as e:
+        conn.rollback()
+        cur.execute(query, data)
+        conn.commit()        
     except Exception as e:
         print(e, 'Ошибка при попытке добавить нового пользователя')
         raise e
@@ -218,6 +244,10 @@ def add_user_to_bot(conn, cur, token, name, email):
             cur.execute(query, data)
             conn.commit()
         except Exception as e:
+            conn.rollback()
+            cur.execute(query, data)
+            conn.commit()
+        except Exception as e:
             print(e, 'Ошибка при попытке добавить пользователя боту')
             raise e
 
@@ -226,6 +256,10 @@ def delete_user_from_bot(conn, cur, token):
     query = "UPDATE chat SET user_id = null WHERE token = %s"
     data = [token,]
     try:
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
@@ -240,6 +274,10 @@ def add_message_from_manager(conn, cur, message, user_id):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
+        conn.rollback()
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
         print(e, 'Ошибка при попытке добавить сообщение от менеджера')
         raise e   
 
@@ -248,6 +286,10 @@ def add_message_from_client(conn, cur, message, user_id):
     query = "INSERT INTO messages (message, user_id, manager, create_date) VALUES (%s, %s, False, now())"
     data = [message, user_id]
     try:
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
@@ -284,6 +326,10 @@ def delete_messeges(conn, cur, user_id):
     query = "DELETE FROM messages WHERE user_id = %s"
     data = [user_id,]
     try:
+        cur.execute(query, data)
+        conn.commit()
+    except Exception as e:
+        conn.rollback()
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
