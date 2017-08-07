@@ -53,7 +53,7 @@ $(document).ready(function(){
             if(text == ""){
                 return;
             }
-            socket.send(inputName + ': ' + text);
+            socket.send(text);
             clientRequest(text);
             $txt.val(""); 
             $('#send')
@@ -67,10 +67,16 @@ $(document).ready(function(){
 
         if(socket){
             socket.onopen = function(){
-                managerResponse("Я мастер компании The Sarai, чем я могу Вам помочь?")
+                managerResponse("Я мастер компании The Sarai, чем я могу Вам помочь?");
+                socket.send(inputName + "|" + inputEmail);
             }
             socket.onmessage = function(msg){
-                managerResponse(msg.data)
+                if (msg.data.indexOf('CLIENT') + 1) {
+                    clientRequest(msg.data.substr(6, msg.data.length));
+                }
+                else {
+                managerResponse(msg.data);
+            }
             }
             socket.onclose = function(){
                 showServerResponse("The connection has been closed.");
