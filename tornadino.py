@@ -12,6 +12,7 @@ import json
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def __init__(self, application, request, **kwargs):
+        # TODO: если ip совпали, то проверить еще и совпадение имени и фамилии
         super(WSHandler, self).__init__(application, request, **kwargs)
         self.conn, self.cur = telegramBots.connect_postgres()
         _token = telegramBots.used_remote_ip(self.conn, self.cur, request.remote_ip)
@@ -76,7 +77,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if '@' in message and '|' in message:
             self.name = message.split('|')[0]
             self.email = message.split('|')[1]
-            if self.user_id is not None:
+            if self.user_id is None:
                 _id = telegramBots.get_user(self.conn, self.cur, self.name, self.email)
                 if _id:
                     self.user_id = _id
@@ -114,7 +115,7 @@ application = tornado.web.Application([
 ], **settings)
 
 if __name__ == "__main__":
-    application.listen(8080)
+    application.listen(8081)
     tornado.ioloop.IOLoop.current().start()
 
 
