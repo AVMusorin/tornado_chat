@@ -278,8 +278,7 @@ def add_message_from_manager(conn, cur, message, user_id):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
-        print(e, 'Ошибка при попытке добавить сообщение от менеджера')
-        raise e   
+        print(e, 'Ошибка при попытке добавить сообщение от менеджера') 
 
 
 def add_message_from_client(conn, cur, message, user_id):
@@ -293,8 +292,7 @@ def add_message_from_client(conn, cur, message, user_id):
         cur.execute(query, data)
         conn.commit()
     except Exception as e:
-        print(e, 'Ошибка при попытке добавить сообщение от клиента')
-        raise e   
+        print(e, 'Ошибка при попытке добавить сообщение от клиента') 
 
 
 def get_messages(conn, cur, user_id):
