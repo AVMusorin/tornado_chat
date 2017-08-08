@@ -76,14 +76,14 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         if '@' in message and '|' in message:
             self.name = message.split('|')[0]
             self.email = message.split('|')[1]
-            if not self.user_id:
+            if self.user_id is not None:
                 _id = telegramBots.get_user(self.conn, self.cur, self.name, self.email)
                 if _id:
                     self.user_id = _id
                     self.previous_dialog(self.user_id)
                 else:
-                    self.user_id = _id
                     telegramBots.add_user(self.conn, self.cur, self.name, self.email)
+                    self.user_id = telegramBots.get_user(self.conn, self.cur, self.name, self.email)
                 telegramBots.add_user_to_bot(self.conn, self.cur, self.bot_token, self.name, self.email)
         else:
             if not self.customer_asked:
