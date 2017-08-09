@@ -270,29 +270,31 @@ def delete_user_from_bot(conn, cur, token):
 def add_message_from_manager(conn, cur, message, user_id):
     query = "INSERT INTO messages (message, user_id, manager, create_date) VALUES (%s, %s, True, now())"
     data = [message, user_id]
-    try:
-        cur.execute(query, data)
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        cur.execute(query, data)
-        conn.commit()
-    except Exception as e:
-        print(e, 'Ошибка при попытке добавить сообщение от менеджера') 
+    if user_id:
+        try:
+            cur.execute(query, data)
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            cur.execute(query, data)
+            conn.commit()
+        except Exception as e:
+            print(e, 'Ошибка при попытке добавить сообщение от менеджера') 
 
 
 def add_message_from_client(conn, cur, message, user_id):
     query = "INSERT INTO messages (message, user_id, manager, create_date) VALUES (%s, %s, False, now())"
     data = [message, user_id]
-    try:
-        cur.execute(query, data)
-        conn.commit()
-    except Exception as e:
-        conn.rollback()
-        cur.execute(query, data)
-        conn.commit()
-    except Exception as e:
-        print(e, 'Ошибка при попытке добавить сообщение от клиента') 
+    if user_id:
+        try:
+            cur.execute(query, data)
+            conn.commit()
+        except Exception as e:
+            conn.rollback()
+            cur.execute(query, data)
+            conn.commit()
+        except Exception as e:
+            print(e, 'Ошибка при попытке добавить сообщение от клиента') 
 
 
 def get_messages(conn, cur, user_id):

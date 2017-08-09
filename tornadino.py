@@ -92,7 +92,8 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 # обновить значение в бд, что клиент задал вопрос
                 telegramBots._update_customer_asked(self.conn, self.cur, self.bot_token, True)
             telegramBots.send_message(self.bot_token, CHAT_ID, self.name + ': ' + message)
-            telegramBots.add_message_from_client(self.conn, self.cur, message, self.user_id)
+            if self.user_id:
+                telegramBots.add_message_from_client(self.conn, self.cur, message, self.user_id)
 
     def on_close(self):
         print ('connection closed...')
