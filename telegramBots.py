@@ -1,9 +1,8 @@
-from telebot import TeleBot
 from telebot import apihelper
 from bot_settings import db
 import psycopg2
 import datetime
-
+#CHAT_ID Петя 71512609
 
 def get_updates(token, conn, cur, offset=None, limit=None, timeout=20):
     ''' Возвращает сообщение из телеграма '''
@@ -19,16 +18,12 @@ def get_updates(token, conn, cur, offset=None, limit=None, timeout=20):
     else:
         _update_last_message(conn, cur, token, answer)
 
-
 def send_message(token, chat_id, text):
     '''Отправить сообщение менеджеру в телеграм'''
     apihelper.send_message(token, chat_id, text)
 
 
 def connect_postgres(**kwargs):
-    '''
-    TODO: Возможность передать через kwargs аргументы для поключения
-    '''
     try:
         conn = psycopg2.connect(dbname=db['db_name'],
                                 user=db['user'],

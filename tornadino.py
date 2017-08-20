@@ -12,7 +12,6 @@ import json
 
 class WSHandler(tornado.websocket.WebSocketHandler):
     def __init__(self, application, request, **kwargs):
-        # TODO: если ip совпали, то проверить еще и совпадение имени и фамилии
         super(WSHandler, self).__init__(application, request, **kwargs)
         self.conn, self.cur = telegramBots.connect_postgres()
         _token = telegramBots.used_remote_ip(self.conn, self.cur, request.remote_ip)
@@ -27,7 +26,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         else:
             self.get_bot(self.conn, self.cur, request.remote_ip)
 
-    @gen.coroutine
+
     def get_bot(self, conn, cur, ip):
         while True:
             bot = telegramBots.get_bot(conn, cur)
@@ -38,8 +37,6 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                 telegramBots._make_bot_busy(self.conn, self.cur, self.bot_token)  
                 telegramBots.add_remote_ip(self.conn, self.cur, self.bot_token, ip)
                 break
-            else:
-                yield gen.sleep(5)      
 
 
     def check_origin(self, origin):
@@ -67,6 +64,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
 
     def open(self):
         print ('connection opened...')
+        # будем опрашивать сервер telegram каждые 3сек
         self.telegram_loop = tornado.ioloop.PeriodicCallback(self.bot_callback, 3000) # callback каждые 3сек
         self.telegram_loop.start()
         if self.user_id:

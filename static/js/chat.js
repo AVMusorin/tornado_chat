@@ -1,9 +1,10 @@
-(function($) {
-    $(document).ready(function() {
+
+$(document).ready(function() {
         var $chatbox = $('.chatbox'),
             $chatboxTitle = $('.chatbox__title'),
             $chatboxTitleClose = $('.chatbox__title__close'),
             $chatboxCredentials = $('.chatbox__credentials');
+            $chatboxWS = $("#start-ws");
         $chatboxTitle.on('click', function() {
             $chatbox.toggleClass('chatbox--tray');
         });
@@ -21,12 +22,8 @@
             e.preventDefault();
             $chatbox.removeClass('chatbox--empty');
         });
-    });
-})(jQuery);
 
-
-$(document).ready(function(){
-    $('#start-ws').click(function(){
+        $chatboxWS.on('click', function(e){
             if (!("WebSocket" in window)) {
                 alert("Ваш браузер не поддерживает web sockets");
             }
@@ -36,27 +33,29 @@ $(document).ready(function(){
                     setup();
                 }
             }
+        });
+})
 
+function setup(){
+    var host = "ws://127.0.0.1:8080/ws";
+    var socket = new WebSocket(host); 
+    window.sock = socket;  
+    var $txt = $("#message");
+    var $btnSend = $("#sendmessage");
+    var inputName = $("#inputName").val();
+    var inputEmail = $("#inputEmail").val();
+    $.cookie('name', inputName);
+    $.cookie('email', inputEmail);
 
-    function setup(){
-        var host = "ws://127.0.0.1:8080/ws";
-        var socket = new WebSocket(host); 
-        window.sock = socket;  
-        var $txt = $("#message");
-        var $btnSend = $("#sendmessage");
-        var inputName = $("#inputName").val();
-        var inputEmail = $("#inputEmail").val();
-
-        $txt.focus();
-        $btnSend.on('click',function(){
-            var text = $txt.val();
-            if(text == ""){
-                return;
-            }
-            socket.send(text);
-            clientRequest(text);
-            $txt.val(""); 
-            $('#send')
+    $txt.focus();
+    $btnSend.on('click',function(){
+        var text = $txt.val();
+        if(text == ""){
+            return;
+        }
+        socket.send(text);
+        clientRequest(text);
+        $txt.val(""); 
         });
 
         $txt.keypress(function(evt){
@@ -84,20 +83,19 @@ $(document).ready(function(){
             }
         }else{
             console.log("invalid socket");
-        }
-
-        function showServerResponse(txt){
-            var p = document.createElement('p');
-            p.innerHTML = txt;
-            document.getElementById('messages__box').appendChild(p); 
-        }
-
-        function clientRequest(txt) {
-            $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--right'> <img src='https://s3.amazonaws.com/uifaces/faces/twitter/arashmil/128.jpg' alt='Picture'> <p>" + txt + "</p> </div>");
         } 
-        function managerResponse(txt) {
-            $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--left'> <img src='../img/person.png' alt='Picture'> <p>" + txt + "</p> </div>");
-        }   
-    }
-    }); 
-});
+    }; 
+
+function showServerResponse(txt){
+    var p = document.createElement('p');
+    p.innerHTML = txt;
+    document.getElementById('messages__box').appendChild(p); 
+}
+
+function clientRequest(txt) {
+    $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--right'> <img src='https://s3.amazonaws.com/uifaces/faces/twitter/arashmil/128.jpg' alt='Picture'> <p>" + txt + "</p> </div>");
+}
+
+function managerResponse(txt) {
+    $("#messages__box").append("<div class='chatbox__body__message chatbox__body__message--left'> <img src='../img/person.png' alt='Picture'> <p>" + txt + "</p> </div>");
+}  
